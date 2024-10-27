@@ -34,8 +34,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        source: ./
-        destination: ./_site
 
     - name: Build
       run: |
@@ -43,7 +41,9 @@ jobs:
         npm run build
     
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./
 
   # Single deploy job since we're just deploying
   deploy:
