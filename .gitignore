@@ -1,0 +1,8 @@
+node_modules/
+.git/
+
+*.js
+*.mjs
+*.map
+
+package-lock.json
