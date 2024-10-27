@@ -1,4 +1,4 @@
-name: NodeJS with Webpack and Deploy to GitHub Pages
+name: Build ts to js and Deploy to GitHub Pages
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
     - name: Build
       run: |
         npm install
-        npm run serve
+        npm run build
 
   # Single deploy job since we're just deploying
   deploy:
