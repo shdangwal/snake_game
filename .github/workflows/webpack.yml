@@ -39,7 +39,7 @@ jobs:
       run: |
         npm install
         npm run build
-        rm -rm node_modules
+        rm -rf node_modules
     
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
