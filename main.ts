@@ -4,7 +4,7 @@ const PLAYER_INITIAL_SPEED = 500;
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const THEME_MODE = "dark";
-const EPS = 10;
+const EPS = OBJECT_SIZE;
 
 type Direction = "left" | "right" | "up" | "down";
 
@@ -45,14 +45,18 @@ interface ICanvas {
   fillStyle: string,
 }
 
+interface ILink {
+  x: number,
+  y: number,
+  next?: ILink,
+}
+
 interface IPlayer {
   length: number,
   breadth: number,
-  x: number,
-  y: number,
   speed: number,
   moving: Moving,
-  links: number,
+  headLink: ILink,
 }
 
 interface IObject {
@@ -88,25 +92,27 @@ const player: IPlayer = {
   length: PLAYER_INITIAL_SIZE,
   breadth: PLAYER_INITIAL_SIZE,
   speed: PLAYER_INITIAL_SPEED,
-  x: Math.random() * CANVAS_WIDTH,
-  y: Math.random() * CANVAS_HEIGHT,
+  headLink: {
+    x: Math.random() * CANVAS_WIDTH,
+    y: Math.random() * CANVAS_HEIGHT,
+    next: undefined,
+  },
   moving: {
     "left": true,
     "right": false,
     "up": false,
     "down": false,
   },
-  links: 1,
 };
 
 const object: IObject = {
-  x: Math.random() * CANVAS_WIDTH,
-  y: Math.random() * CANVAS_HEIGHT,
+  x: Math.floor(Math.random() * CANVAS_WIDTH),
+  y: Math.floor(Math.random() * CANVAS_HEIGHT),
   size: OBJECT_SIZE,
 };
 
 function correctMod(a: number, b: number): number {
-  return ((a % b) + b) % b;
+  return Math.floor(((a % b) + b) % b);
 }
 
 function setPlayerDirection(direction: Direction) {
@@ -121,11 +127,24 @@ function setPlayerDirection(direction: Direction) {
 
 function playerTouchesObject(): boolean {
   if (
-    Math.abs(player.x - object.x) <= EPS
-    && Math.abs(player.y - object.y) <= EPS
+    Math.abs(player.headLink.x - object.x) <= EPS
+    && Math.abs(player.headLink.y - object.y) <= EPS
   )
     return true;
   return false;
+}
+
+function addPlayerLink(playerPreviousPosition: { x: number, y: number }) {
+  const newLink: ILink = {
+    x: playerPreviousPosition.x,
+    y: playerPreviousPosition.y,
+    next: undefined,
+  }
+  let currentLink: ILink = player.headLink;
+  while (currentLink.next) {
+    currentLink = currentLink.next;
+  }
+  currentLink.next = newLink;
 }
 
 function updateObjectPosition() {
@@ -143,12 +162,37 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
       dy += DIRECTION_VECTORS[dir].y;
     }
   }
-  player.x = correctMod(player.x + dx * player.speed * deltaTime, canvas.width);
-  player.y = correctMod(player.y + dy * player.speed * deltaTime, canvas.height);
+  let playerPreviousPosition: { x: number, y: number } | undefined;
+  let newPosition: { x: number, y: number } = {
+    x: correctMod(player.headLink.x + dx * player.speed * deltaTime, canvas.width),
+    y: correctMod(player.headLink.y + dy * player.speed * deltaTime, canvas.height),
+  }
 
-  console.log(`Player: ${player.x}, ${player.y} \nObject x: ${object.x}, y: ${object.y}`);
+  let currentLink = player.headLink;
+  while (currentLink) {
+    playerPreviousPosition = {
+      x: currentLink.x,
+      y: currentLink.y,
+    };
+    currentLink.x = newPosition.x;
+    currentLink.y = newPosition.y;
+    newPosition = {
+      x: playerPreviousPosition.x,
+      y: playerPreviousPosition.y,
+    }
+    if (currentLink.next) {
+      console.log('test');
+      currentLink = currentLink.next;
+    } else {
+      console.log('test1');
+      break;
+    }
+  }
+
   if (playerTouchesObject()) {
     updateObjectPosition();
+    if (playerPreviousPosition)
+      addPlayerLink(playerPreviousPosition);
   }
 }
 
@@ -171,13 +215,13 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
 
     // NOTE: drawing player
     updatePlayer(player, deltaTime);
-    ctx.fillStyle = theme.playerFillStyle;
-    ctx.fillRect(player.x, player.y, player.length, player.breadth);
-    ctx.strokeStyle = theme.playerStrokeStyle;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.strokeRect(player.x, player.y, player.length, player.breadth);
-    ctx.stroke();
+    let currentLink: ILink | undefined = player.headLink;
+    while (currentLink) {
+      ctx.fillStyle = theme.playerFillStyle;
+      ctx.fillRect(currentLink.x, currentLink.y, player.length, player.breadth);
+
+      currentLink = currentLink.next;
+    }
 
     // NOTE: drawing object
     ctx.fillStyle = theme.objectFillStyle;
