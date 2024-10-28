@@ -151,6 +151,11 @@ function updateObjectPosition() {
   object.y = Math.min(Math.random() * canvas.height, canvas.height - OBJECT_SIZE);
 }
 
+function addPlayerScore() {
+  const score = document.getElementById("score") as HTMLElement;
+  score.innerHTML = (player.linkCount - 1).toString();
+}
+
 function updatePlayer(player: IPlayer, deltaTime: number) {
   let dir: Direction;
   let dx = 0;
@@ -190,6 +195,7 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
     updateObjectPosition();
     if (playerPreviousPosition)
       addPlayerLink(playerPreviousPosition);
+    addPlayerScore();
   }
 }
 
