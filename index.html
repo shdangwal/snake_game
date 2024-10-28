@@ -3,12 +3,74 @@
 <head>
   <title>Snake Game</title>
   <style>
+    :root {
+      --background-color: #f0f0f0;
+      --color: #121212;
+      --color04: #12121204;
+      --color10: #12121210;
+      --filter-color: rt(54%) sepia(0%) saturate(0%) hue-rotate(55deg) brightness(101%) contrast(95%);
+      --highlight-color: #959595;
+      --shadow-color: #00000020;
+      --player-fill-style: "#257180";
+      --object-fill-style: "#FD8B51";
+      --player-stroke-style: "#F2E5BF";
+      --canvas-fill-style: "#f7f7f7";
+    }
+
+    .dark-mode {
+      --background-color: #121212;
+      --color: #f0f0f0;
+      --color04: #f0f0f004;
+      --color10: #f0f0f010;
+      --filter-color: invert(100%) sepia(3%) saturate(160%) hue-rotate(220deg) brightness(115%) contrast(95%);
+      --highlight-color: #959595;
+      --shadow-color: #ffffff20;
+      --player-fill-style: "#257180";
+      --object-fill-style: "#FD8B51";
+      --player-stroke-style: "#F2E5BF";
+      --canvas-fill-style: "#282828";
+    }
+
     body {
-      background-color: #222222;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      color: var(--color);
+      background-color: var(--background-color);
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: 2%;
+    }
+
+    .container ul {
+      list-style-type: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+    }
+
+    .container ul li {
+      margin: 0px 5px;
+    }
+
+    .svg {
+      filter: var(--filter-color);
+    }
+
+    .btn {
+      padding: 7px 5px 5px 5px;
+    }
+
+    .btn:hover {
+      background: var(--highlight-color);
+      border-radius: 5px;
     }
 
     canvas {
-      border: 1px solid #3F3F3F;
+      box-shadow: 0 4px 8px 0px var(--shadow-color);
+      border: 1px solid var(--color04);
       padding: 0;
       display: block;
       margin: auto;
@@ -18,11 +80,67 @@
       right: 0;
       left: 0;
     }
+
+    #overlay {
+      position: absolute;
+      margin: auto;
+      display: block;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      background-color: var(--color10);
+      backdrop-filter: blur(5px);
+    }
+
+    #overlay div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
   </style>
 </head>
 
-<body>
+<body id="body">
+  <nav class="container">
+    <div>
+      <h1>Snakes</h1>
+    </div>
+    <div>
+      <ul>
+        <li>
+          <h3>Score: <span id="score">0</span></h3>
+        </li>
+        <li class="btn">
+          <img id="gameState" onclick="togglePlay()" title="Pause Game" class="svg" src="./img/pause.svg" width="20"
+            height="20" />
+        </li>
+        <li class="btn">
+          <img onclick="resetGame()" class="svg" title="Reset Game" src="./img/reset.svg" width="20" height="20" />
+        </li>
+        <li class="btn">
+          <img id="themeMode" title="Dark Mode" onclick="toggleTheme()" class="svg" src="./img/dark_mode.svg" width="20"
+            height="20" />
+        </li>
+      </ul>
+    </div>
+  </nav>
   <canvas id="game"></canvas>
+
+  <div id="overlay">
+    <div>
+      <h1>Snakes</h1>
+      <span class="btn">
+        <img onclick="startGame()" class="svg" src="./img/play.svg" width="40" height="40" />
+      </span>
+      <span>
+        Click to Play
+      </span>
+    </div>
+  </div>
   <script src="main.js"></script>
 </body>
 

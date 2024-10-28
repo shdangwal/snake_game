@@ -3,8 +3,23 @@ const PLAYER_INITIAL_SIZE = 20;
 const PLAYER_INITIAL_SPEED = 500;
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
-const THEME_MODE = "dark";
 const EPS = OBJECT_SIZE;
+
+let gameActive: boolean = false;
+
+const darkTheme: ITheme = {
+  canvasFillStyle: "#282828",
+  playerFillStyle: "#257180",
+  playerStrokeStyle: "#F2E5BF",
+  objectFillStyle: "#FD8B51",
+};
+const lightTheme = {
+  canvasFillStyle: "#f7f7f7",
+  playerFillStyle: "#257180",
+  playerStrokeStyle: "#F2E5BF",
+  objectFillStyle: "#FD8B51",
+};
+let theme = lightTheme;
 
 type Direction = "left" | "right" | "up" | "down";
 
@@ -63,23 +78,6 @@ interface IObject {
   size: number,
   x: number,
   y: number,
-}
-
-let theme: ITheme;
-if (THEME_MODE === "dark") {
-  theme = {
-    canvasFillStyle: "#282828",
-    playerFillStyle: "#257180",
-    playerStrokeStyle: "#F2E5BF",
-    objectFillStyle: "#FD8B51",
-  };
-} else {
-  theme = {
-    canvasFillStyle: "",
-    playerFillStyle: "",
-    playerStrokeStyle: "",
-    objectFillStyle: "",
-  }
 }
 
 const canvas: ICanvas = {
@@ -149,8 +147,8 @@ function addPlayerLink(playerPreviousPosition: { x: number, y: number }) {
 }
 
 function updateObjectPosition() {
-  object.x = Math.random() * canvas.width;
-  object.y = Math.random() * canvas.height;
+  object.x = Math.min(Math.random() * canvas.width, canvas.width - OBJECT_SIZE);
+  object.y = Math.min(Math.random() * canvas.height, canvas.height - OBJECT_SIZE);
 }
 
 function updatePlayer(player: IPlayer, deltaTime: number) {
@@ -182,10 +180,8 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
       y: playerPreviousPosition.y,
     }
     if (currentLink.next) {
-      console.log('test');
       currentLink = currentLink.next;
     } else {
-      console.log('test1');
       break;
     }
   }
@@ -197,7 +193,7 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
   }
 }
 
-(() => {
+const game = (() => {
   const gameCanvas = document.getElementById("game") as HTMLCanvasElement | undefined;
   if (!gameCanvas) throw new Error("No element with id `game` present.");
   gameCanvas.width = canvas.width;
@@ -232,7 +228,9 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
     ctx.fillStyle = theme.objectFillStyle;
     ctx.fillRect(object.x, object.y, object.size, object.size);
 
-    window.requestAnimationFrame(frame);
+    if (gameActive) {
+      window.requestAnimationFrame(frame);
+    }
   });
 
   window.requestAnimationFrame((timestamp: number) => {
@@ -247,4 +245,45 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
       }
     }
   });
-})();
+});
+
+function startGame() {
+  const overlayDisplay = document.getElementById("overlay");
+  if (overlayDisplay)
+    overlayDisplay.style.display = "none";
+  gameActive = true;
+  game();
+}
+
+function toggleTheme() {
+  const body = document.getElementById("body") as HTMLElement;
+  const themeMode = document.getElementById("themeMode") as HTMLElement;
+  if (theme === lightTheme) {
+    theme = darkTheme;
+    body.classList.add("dark-mode");
+    themeMode.setAttribute("src", "./img/light_mode.svg");
+    themeMode.setAttribute("title", "Light Mode")
+  } else {
+    theme = lightTheme;
+    body.classList.remove("dark-mode");
+    themeMode.setAttribute("src", "./img/dark_mode.svg");
+    themeMode.setAttribute("title", "Dark Mode")
+  }
+}
+
+function togglePlay() {
+  const gameState = document.getElementById("gameState") as HTMLElement;
+  if (gameActive) {
+    gameState.setAttribute("src", "./img/play.svg");
+    gameState.setAttribute("title", "Play Game");
+  } else {
+    gameState.setAttribute("src", "./img/pause.svg");
+    gameState.setAttribute("title", "Pause Game");
+  }
+  gameActive = !gameActive;
+  if (gameActive) game();
+}
+
+function resetGame() {
+
+}
