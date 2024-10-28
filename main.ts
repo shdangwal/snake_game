@@ -156,6 +156,32 @@ function addPlayerScore() {
   score.innerHTML = (player.linkCount - 1).toString();
 }
 
+function collisionDetection() {
+  let collisionDetected: boolean = false;
+  let headPosition: { x: number, y: number } = {
+    x: player.headLink.x,
+    y: player.headLink.y,
+  };
+  let currentLink = player.headLink.next;
+  while (currentLink) {
+    if (
+      Math.abs(currentLink.x - headPosition.x) == 0 &&
+      Math.abs(currentLink.y - headPosition.y) == 0
+    ) {
+      collisionDetected = true;
+    }
+    currentLink = currentLink.next;
+  }
+
+  if (collisionDetected) {
+    gameActive = false;
+    const endSplashDiv = document.getElementById("endOverlay") as HTMLElement;
+    endSplashDiv.style.display = "block";
+    const endScoreSpan = document.getElementById("endScore") as HTMLElement;
+    endScoreSpan.innerHTML = (player.linkCount - 1).toString();
+  }
+}
+
 function updatePlayer(player: IPlayer, deltaTime: number) {
   let dir: Direction;
   let dx = 0;
@@ -191,7 +217,10 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
     }
   }
 
+  collisionDetection();
+
   if (playerTouchesObject()) {
+    player.speed += 1;
     updateObjectPosition();
     if (playerPreviousPosition)
       addPlayerLink(playerPreviousPosition);
@@ -254,7 +283,7 @@ const game = (() => {
 });
 
 function startGame() {
-  const overlayDisplay = document.getElementById("overlay");
+  const overlayDisplay = document.getElementById("startOverlay");
   if (overlayDisplay)
     overlayDisplay.style.display = "none";
   gameActive = true;
@@ -310,4 +339,10 @@ function resetGame() {
     linkCount: 1,
   };
   gameActive = true;
+  const endSplashDiv = document.getElementById("endOverlay") as HTMLElement;
+  if (endSplashDiv.style.display === "block") {
+    endSplashDiv.style.display = "none";
+    game();
+  }
+
 }

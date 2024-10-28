@@ -81,7 +81,7 @@
       left: 0;
     }
 
-    #overlay {
+    .overlay {
       position: absolute;
       margin: auto;
       display: block;
@@ -94,12 +94,16 @@
       backdrop-filter: blur(5px);
     }
 
-    #overlay div {
+    .overlay div {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100%;
+    }
+
+    #endOverlay {
+      display: none;
     }
   </style>
 </head>
@@ -130,7 +134,7 @@
   </nav>
   <canvas id="game"></canvas>
 
-  <div id="overlay">
+  <div id="startOverlay" class="overlay">
     <div>
       <h1>Snakes</h1>
       <span class="btn">
@@ -138,6 +142,18 @@
       </span>
       <span>
         Click to Play
+      </span>
+    </div>
+  </div>
+  <div id="endOverlay" class="overlay">
+    <div>
+      <h1>GAME OVER!!!</h1>
+      <h3>Score:<span id="endScore"></span></h3>
+      <span class="btn">
+        <img onclick="resetGame()" class="svg" src="./img/play.svg" width="40" height="40" />
+      </span>
+      <span>
+        Click to Play Again
       </span>
     </div>
   </div>
