@@ -86,7 +86,7 @@ const canvas: ICanvas = {
   fillStyle: theme.canvasFillStyle,
 };
 
-const player: IPlayer = {
+let player: IPlayer = {
   size: PLAYER_INITIAL_SIZE,
   speed: PLAYER_INITIAL_SPEED,
   headLink: {
@@ -104,8 +104,8 @@ const player: IPlayer = {
 };
 
 const object: IObject = {
-  x: Math.floor(Math.random() * CANVAS_WIDTH),
-  y: Math.floor(Math.random() * CANVAS_HEIGHT),
+  x: Math.min(Math.random() * canvas.width, canvas.width - OBJECT_SIZE),
+  y: Math.min(Math.random() * canvas.height, canvas.height - OBJECT_SIZE),
   size: OBJECT_SIZE,
 };
 
@@ -285,5 +285,23 @@ function togglePlay() {
 }
 
 function resetGame() {
-
+  gameActive = false;
+  updateObjectPosition();
+  player = {
+    size: PLAYER_INITIAL_SIZE,
+    speed: PLAYER_INITIAL_SPEED,
+    headLink: {
+      x: Math.random() * CANVAS_WIDTH,
+      y: Math.random() * CANVAS_HEIGHT,
+      next: undefined,
+    },
+    moving: {
+      "left": true,
+      "right": false,
+      "up": false,
+      "down": false,
+    },
+    linkCount: 1,
+  };
+  gameActive = true;
 }
