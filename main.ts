@@ -52,11 +52,11 @@ interface ILink {
 }
 
 interface IPlayer {
-  length: number,
-  breadth: number,
+  size: number,
   speed: number,
   moving: Moving,
   headLink: ILink,
+  linkCount: number,
 }
 
 interface IObject {
@@ -89,8 +89,7 @@ const canvas: ICanvas = {
 };
 
 const player: IPlayer = {
-  length: PLAYER_INITIAL_SIZE,
-  breadth: PLAYER_INITIAL_SIZE,
+  size: PLAYER_INITIAL_SIZE,
   speed: PLAYER_INITIAL_SPEED,
   headLink: {
     x: Math.random() * CANVAS_WIDTH,
@@ -103,6 +102,7 @@ const player: IPlayer = {
     "up": false,
     "down": false,
   },
+  linkCount: 1,
 };
 
 const object: IObject = {
@@ -145,6 +145,7 @@ function addPlayerLink(playerPreviousPosition: { x: number, y: number }) {
     currentLink = currentLink.next;
   }
   currentLink.next = newLink;
+  player.linkCount += 1;
 }
 
 function updateObjectPosition() {
@@ -218,10 +219,14 @@ function updatePlayer(player: IPlayer, deltaTime: number) {
     let currentLink: ILink | undefined = player.headLink;
     while (currentLink) {
       ctx.fillStyle = theme.playerFillStyle;
-      ctx.fillRect(currentLink.x, currentLink.y, player.length, player.breadth);
+      ctx.fillRect(currentLink.x, currentLink.y, player.size, player.size);
 
       currentLink = currentLink.next;
     }
+
+    // NOTE: add styling to headLink player
+    ctx.fillStyle = theme.playerStrokeStyle;
+    ctx.fillRect(player.headLink.x + (player.size / 4), player.headLink.y + (player.size / 4), player.size - (player.size / 2), player.size - (player.size / 2));
 
     // NOTE: drawing object
     ctx.fillStyle = theme.objectFillStyle;
