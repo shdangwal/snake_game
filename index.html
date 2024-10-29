@@ -118,16 +118,14 @@
         <li>
           <h3>Score: <span id="score">0</span></h3>
         </li>
-        <li class="btn">
-          <img id="gameState" onclick="togglePlay()" title="Pause Game" class="svg" src="./img/pause.svg" width="20"
-            height="20" />
+        <li class="btn" onclick="togglePlay()">
+          <img id="gameState" title="Pause Game" class="svg" src="./img/pause.svg" width="20" height="20" />
         </li>
-        <li class="btn">
-          <img onclick="resetGame()" class="svg" title="Reset Game" src="./img/reset.svg" width="20" height="20" />
+        <li class="btn" onclick="resetGame()">
+          <img class="svg" title="Reset Game" src="./img/reset.svg" width="20" height="20" />
         </li>
-        <li class="btn">
-          <img id="themeMode" title="Dark Mode" onclick="toggleTheme()" class="svg" src="./img/dark_mode.svg" width="20"
-            height="20" />
+        <li class="btn" onclick="toggleTheme()">
+          <img id="themeMode" title="Dark Mode" class="svg" src="./img/dark_mode.svg" width="20" height="20" />
         </li>
       </ul>
     </div>
@@ -137,8 +135,8 @@
   <div id="startOverlay" class="overlay">
     <div>
       <h1>Snakes</h1>
-      <span class="btn">
-        <img onclick="startGame()" class="svg" src="./img/play.svg" width="40" height="40" />
+      <span class="btn" onclick=" startGame()">
+        <img class="svg" src="./img/play.svg" width="40" height="40" />
       </span>
       <span>
         Click to Play
@@ -149,8 +147,8 @@
     <div>
       <h1>GAME OVER!!!</h1>
       <h3>Score:<span id="endScore"></span></h3>
-      <span class="btn">
-        <img onclick="resetGame()" class="svg" src="./img/play.svg" width="40" height="40" />
+      <span class="btn" onclick="resetGame()">
+        <img class="svg" src="./img/play.svg" width="40" height="40" />
       </span>
       <span>
         Click to Play Again
